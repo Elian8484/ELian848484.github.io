@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X Jornadas Informáticas 2025</title>
+    <!-- Carga de Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Carga de la fuente Inter de Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos personalizados para animaciones y fondos */
+        body {
+            font-family: 'Inter', sans-serif; /* Fuente Sans Serif */
+            background: linear-gradient(135deg, #0f172a 0%, #1a202c 100%); /* Fondo degradado oscuro */
+            color: #e2e8f0; /* Color de texto claro */
+            overflow-x: hidden; /* Evita el scroll horizontal */
+            position: relative;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        body::before {
+          content: "";
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: url('fondo/fondo binario.jpeg') no-repeat center center/cover;
+          opacity: 0.6;
+          z-index: -1;
+        }
+
+        /* Keyframe para una animación de desvanecimiento y deslizamiento */
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Keyframe para un efecto de brillo sutil */
+        @keyframes neonGlow {
+            0%, 100% { text-shadow: 0 0 5px #a78bfa, 0 0 10px #a78bfa; }
+            50% { text-shadow: 0 0 10px #c4b5fd, 0 0 20px #c4b5fd; }
+        }
+
+        /* Keyframe para una sutil animación de fondo */
+        @keyframes backgroundPan {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Clase para elementos que se animarán al estar visibles */
+        .animated-section {
+            opacity: 0; /* Empieza invisible */
+            /* La animación se aplica solo cuando la clase animated-section-visible está presente */
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out; /* Transición para cuando se remueve la clase */
+        }
+
+        /* Clase que se añade con JavaScript para disparar la animación */
+        .animated-section-visible {
+            animation: fadeInSlideUp 0.8s ease-out forwards;
+            animation-delay: var(--animation-delay, 0s); /* Retraso para elementos individuales */
+        }
+
+        .neon-text {
+            animation: neonGlow 1.5s ease-in-out infinite alternate;
+        }
+
+        .hero-background {
+            background: linear-gradient(45deg, #1f2937, #0f172a, #1a202c, #0d121f);
+            background-size: 400% 400%;
+            animation: backgroundPan 15s ease infinite;
+        }
+
+        /* Estilos para el borde brillante de las tarjetas de ponentes */
+        .speaker-card-glow::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #8b5cf6, #ec4899, #0ea5e9, #8b5cf6);
+            background-size: 400%;
+            border-radius: 1.5rem; /* Asegura que el brillo siga el border-radius */
+            z-index: -1;
+            filter: blur(10px);
+            opacity: 0.7;
+            transition: opacity 0.3s ease-in-out;
+            animation: backgroundPan 3s linear infinite;
+        }
+
+        .speaker-card-glow:hover::before {
+            opacity: 1;
+        }
+
+        /* Estilo para el hover de la tarjeta del ponente */
+        .speaker-card-hover:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Colores de acento para cada ponente (reutilizando los 5 originales) */
+        .accent-purple { --accent-color: #a78bfa; }
+        .accent-pink { --accent-color: #f472b6; }
+        .accent-cyan { --accent-color: #22d3ee; }
+        .accent-green { --accent-color: #4ade80; }
+        .accent-orange { --accent-color: #fbbf24; }
+
+        .speaker-gradient-text {
+            background: linear-gradient(90deg, var(--accent-color, #fff), #e2e8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="selection:bg-purple-600 selection:text-white">
+
+    <!-- Script para variables de Firebase (requerido por el entorno, aunque no se usa Firestore en esta demo) -->
+    <script type="text/javascript">
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        console.log("App ID:", appId);
+        console.log("Firebase Config:", firebaseConfig);
+        console.log("Initial Auth Token Available:", !!initialAuthToken);
+
+        // Opcional: Configuración de Firebase Auth si se fuera a usar
+        // import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        // import { getAuth, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // const app = initializeApp(firebaseConfig);
+        // const auth = getAuth(app);
+        // if (initialAuthToken) {
+        //     signInWithCustomToken(auth, initialAuthToken).then(() => console.log("Signed in with custom token")).catch(e => console.error("Auth error:", e));
+        // } else {
+        //     signInAnonymously(auth).then(() => console.log("Signed in anonymously")).catch(e => console.error("Auth error:", e));
+        // }
+    </script>
+
+    <!-- Reproductor de audio oculto -->
+    <audio id="bg-music" src="music/Royalty Free Music - Upbeat Inspiration Background Positive Business Instrumental Motivational.mp3" autoplay loop hidden></audio>
+
+    <!-- Diapositiva 1: Portada de la Conferencia -->
+    <section id="portada" class="hero-background min-h-screen flex items-center justify-center p-4 text-center relative overflow-hidden rounded-b-3xl shadow-2xl">
+        <div class="z-10 animated-section px-4 max-w-6xl mx-auto" style="--animation-delay: 0.2s;">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-3 leading-tight">
+                <span class="block text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 neon-text">Capacitación Académica</span>
+                <span class="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-500 neon-text">Ingeniería en Sistemas de Información 2025</span>
+            </h1>
+            <p class="text-lg md:text-xl text-gray-300 mb-6 animated-section" style="--animation-delay: 0.4s;">
+                Las X Jornadas Informáticas te invitan a una semana de aprendizaje y desarrollo profesional.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6 text-gray-300 animated-section" style="--animation-delay: 0.6s;">
+                <!-- Columna 1: Información del Evento -->
+                <div class="space-y-3 flex flex-col items-center md:items-center">
+                    <p class="text-base md:text-lg font-semibold">
+                        <span class="text-purple-400">📅</span> Fechas: Del 7 al 11 de julio del 2025
+                    </p>
+                    <p class="text-base md:text-lg font-semibold">
+                        <span class="text-pink-400">⏰</span> Hora: 08:00 a 17:00
+                    </p>
+                    <p class="text-base md:text-lg font-semibold">
+                        <span class="text-cyan-400">💻</span> Modalidad: Virtual, utilizando la plataforma Zoom
+                    </p>
+                    <p class="text-base md:text-lg font-semibold">
+                        <span class="text-gray-400">📍</span> Organizado por: <span class="text-white">Extensión La Maná, UTC</span>
+                    </p>
+                </div>
+
+                <!-- Columna 2: Características Destacadas -->
+                <div class="flex flex-col items-center md:items-center">
+                    <p class="font-bold text-white mb-3 text-center">Características Destacadas:</p>
+                    <ul class="space-y-2">
+                        <li class="flex items-center justify-center">
+                            <span class="text-green-400 mr-2">✓</span> Instructores de primer nivel
+                        </li>
+                        <li class="flex items-center justify-center">
+                            <span class="text-orange-400 mr-2">✓</span> Plataforma digital de última generación
+                        </li>
+                        <li class="flex items-center justify-center">
+                            <span class="text-purple-400 mr-2">✓</span> Todos los cursos son certificados
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <button id="scrollToSpeakersBtn" class="mt-8 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-700 text-white font-bold text-base rounded-full shadow-lg hover:from-purple-700 hover:to-indigo-800 transform hover:scale-105 transition duration-300 ease-in-out animated-section" style="--animation-delay: 1.2s;">
+                Conoce a Nuestros Ponentes
+            </button>
+        </div>
+        <!-- Elementos decorativos de fondo -->
+        <div class="absolute inset-0 z-0 opacity-20">
+            <div class="absolute w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob top-1/4 left-1/4"></div>
+            <div class="absolute w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000 top-1/2 right-1/4"></div>
+            <div class="absolute w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000 bottom-1/4 left-1/3"></div>
+        </div>
+    </section>
+
+    <!-- Diapositiva 2: Ponente 1 - Valeria Arguello Castro -->
+    <section id="ponente-valeria-arguello" class="py-20 px-8 bg-gray-950 min-h-screen flex items-center justify-center relative">
+        <div class="container mx-auto flex flex-col lg:flex-row items-center gap-12 animated-section" style="--animation-delay: 0.2s;">
+            <div class="w-full lg:w-1/3 flex justify-center lg:justify-end relative speaker-card-glow accent-purple rounded-3xl p-1 animated-section" style="--animation-delay: 0.3s;">
+                <img src="images/valeria arguello.jpeg" alt="Valeria Arguello Castro" class="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full object-cover shadow-2xl border-4 border-purple-500 transform transition duration-500 hover:scale-105 hover:rotate-3">
+            </div>
+            <div class="w-full lg:w-2/3 text-center lg:text-left animated-section" style="--animation-delay: 0.4s;">
+                <h2 class="text-6xl font-extrabold mb-4 speaker-gradient-text accent-purple animated-section" style="--animation-delay: 0.5s;">
+                    Valeria Arguello Castro, Ph.D.
+                </h2>
+                <p class="text-3xl text-gray-400 mb-6 italic animated-section" style="--animation-delay: 0.6s;">Asuntos Internacionales y Ética de IA</p>
+                <h3 class="text-4xl font-bold mb-8 text-white animated-section" style="--animation-delay: 0.7s;">
+                    "Ley de Gobernanza Mundial y Ética en la IA"
+                </h3>
+                <ul class="text-xl text-gray-300 space-y-4 max-w-2xl mx-auto lg:mx-0">
+                    <li class="flex items-start animated-section" style="--animation-delay: 0.8s;">
+                        <span class="text-purple-400 mr-3 text-2xl">✓</span>
+                        Especialista en Asuntos Internacionales y Estudios Latinoamericanos.
+                    </li>
+                    <li class="flex items-start animated-section" style="--animation-delay: 0.9s;">
+                        <span class="text-purple-400 mr-3 text-2xl">✓</span>
+                        Experta en ética de AI sin Fronteras (AIEB).
+                    </li>
+                    <li class="flex items-start animated-section" style="--animation-delay: 1.0s;">
+                        <span class="text-purple-400 mr-3 text-2xl">✓</span>
+                        Miembro de Mujeres4EthicalAI UNESCO.
+                    </li>
+                    <li class="flex items-start animated-section" style="--animation-delay: 1.1s;">
+                        <span class="text-purple-400 mr-3 text-2xl">📧</span>
+                        <a href="mailto:direccion.sistemaslm.utc.edu.ec" class="hover:underline">direccion.sistemaslm.utc.edu.ec</a>
+                    </li>
+                    <li class="flex items-start animated-section" style="--animation-delay: 1.2s;">
+                        <span class="text-purple-400 mr-3 text-2xl">📞</span>
+                        0996179534
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Diapositiva 3: Ponente 2 - Susana Cadena Vela -->
+    <section id="ponente-susana-cadena" class="py-20 px-8 bg-gray-800 min-h-screen flex items-center justify-center relative">
+        <div class="container mx-auto flex flex-col-reverse lg:flex-row items-center gap-12 animated-section" style="--animation-delay: 0.2s;">
+            <div class="w-full lg:w-2/3 text-center lg:text-right animated-section" style="--animation-delay: 0.4s;">
+                <h2 class="text-6xl font-extrabold mb-4 speaker-gradient-text accent-pink animated-section" style="--animation-delay: 0.5s;">
+                    Susana Cadena Vela, Ph.D.
+                </h2>
+                <p class="text-3xl text-gray-400 mb-6 italic animated-section" style="--animation-delay: 0.6s;">Innovación Tecnológica en Educación</p>
+                <h3 class="text-4xl font-bold mb-8 text-white animated-section" style="--animation-delay: 0.7s;">
+                    "Transformación Digital en la Educación Superior"
+                </h3>
+                <ul class="text-xl text-gray-300 space-y-4 max-w-2xl mx-auto lg:ml-auto lg:mr-0">
+                    <li class="flex items-start justify-end lg:justify-end animated-section" style="--animation-delay: 0.8s;">
+                        Docente e Investigadora en la Universidad Central del Ecuador.
+                        <span class="text-pink-400 ml-3 text-2xl">✓</span>
+                    </li>
+                    <li class="flex items-start justify-end lg:justify-end animated-section" style="--animation-delay: 0.9s;">
+                        Experta en transformación e innovación tecnológica educativa.
+                        <span class="text-pink-400 ml-3 text-2xl">✓</span>
+                    </li>
+                    <li class="flex items-start justify-end lg:justify-end animated-section" style="--animation-delay: 1.0s;">
+                        Cofundadora de Fundación Datalat.
+                        <span class="text-pink-400 ml-3 text-2xl">✓</span>
+                    </li>
+                     <li class="flex items-start justify-end lg:justify-end animated-section" style="--animation-delay: 1.1s;">
+                        <a href="mailto:direccion.sistemaslm.utc.edu.ec" class="hover:underline">direccion.sistemaslm.utc.edu.ec</a>
+                        <span class="text-pink-400 ml-3 text-2xl">📧</span>
+                    </li>
+                    <li class="flex items-start justify-end lg:justify-end animated-section" style="--animation-delay: 1.2s;">
+                        0996179534
+                        <span class="text-pink-400 ml-3 text-2xl">📞</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="w-full lg:w-1/3 flex justify-center lg:justify-start relative speaker-card-glow accent-pink rounded-3xl p-1 animated-section" style="--animation-delay: 0.3s;">
+                <img src="images/susana cadena.jpeg" alt="Susana Cadena Vela" class="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full object-cover shadow-2xl border-4 border-pink-500 transform transition duration-500 hover:scale-105 hover:-rotate-3">
+            </div>
+        </div>
+    </section>
+
+    <!-- Diapositiva 4: Ponente 3 - Amaro La Rosa -->
+    <section id="ponente-amaro-la-rosa" class="py-20 px-8 bg-gray-950 min-h-screen flex items-center justify-center relative">
+        <div class="container mx-auto flex flex-col lg:flex-row items-center gap-12 animated-section" style="--animation-delay: 0.2s;">
+            <div class="w-full lg:w-1/3 flex justify-center lg:justify-end relative speaker-card-glow accent-cyan rounded-3xl p-1 animated-section" style="--animation-delay: 0.3s;">
+                <img src="images/amaro la rosa.jpeg" alt="Amaro La Rosa" class="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full object-cover shadow-2xl border-4 border-cyan-500 transform transition duration-500 hover:scale-105 hover:rotate-3">
+            </div>
+            <div class="w-full lg:w-2/3 text-center lg:text-left animated-section" style="--animation-delay: 0.4s;">
+                <h2 class="text-6xl font-extrabold mb-4 speaker-gradient-text accent-cyan animated-section" style="--animation-delay: 0.5s;">
+                    Amaro La Rosa, Ph.D.
+                </h2>
+                <p class="text-3xl text-gray-400 mb-6 italic animated-section" style="--animation-delay: 0.6s;">Inteligencia Artificial y Sociedad</p>
+                <h3 class="text-4xl font-bold mb-8 text-white animated-section" style="--animation-delay: 0.7s;">
+                    "Desafíos Éticos de la Inteligencia Artificial"
+                </h3>
+                <ul class="text-xl text-gray-300 space-y-4 max-w-2xl mx-auto lg:mx-0">
+                    <li class="flex items-start animated-section" style="--animation-delay: 0.8s;">
+                        <span class="text-cyan-400 mr-3 text-2xl">✓</span>
+                        Docente en la Universidad Femenina del Sagrado Corazón.
+                    </li>
+                    <li class="flex items-start animated-section" style="--animation-delay: 0.9s;">
+                        <span class="text-cyan-400 mr-3 text-2xl">✓</span>
+                        Estudios de especialización en CIESPAL.
+                    </li>
+                    <li class="flex items-start animated-section" style="--animation-delay: 1.0s;">
+                        <span class="text-cyan-400 mr-3 text-2xl">✓</span>
+                        Miembro de la Red Mundial de Inteligencia Artificial y Sociedad Internacional (GNAIIS).
+                    </li>
+                    <li class="flex items-start animated-section" style="--animation-delay: 1.1s;">
+                        <span class="text-cyan-400 mr-3 text-2xl">📧</span>
+                        <a href="mailto:direccion.sistemaslm.utc.edu.ec" class="hover:underline">direccion.sistemaslm.utc.edu.ec</a>
+                    </li>
+                    <li class="flex items-start animated-section" style="--animation-delay: 1.2s;">
+                        <span class="text-cyan-400 mr-3 text-2xl">📞</span>
+                        0996179534
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Diapositiva 5: Ponente 4 - Gianfranco Mejía Trujillo -->
+    <section id="ponente-gianfranco-mejia" class="py-20 px-8 bg-gray-800 min-h-screen flex items-center justify-center relative">
+        <div class="container mx-auto flex flex-col-reverse lg:flex-row items-center gap-12 animated-section" style="--animation-delay: 0.2s;">
+            <div class="w-full lg:w-2/3 text-center lg:text-right animated-section" style="--animation-delay: 0.4s;">
+                <h2 class="text-6xl font-extrabold mb-4 speaker-gradient-text accent-green animated-section" style="--animation-delay: 0.5s;">
+                    Gianfranco Mejía Trujillo, Ph.D.
+                </h2>
+                <p class="text-3xl text-gray-400 mb-6 italic animated-section" style="--animation-delay: 0.6s;">Regulación de la IA</p>
+                <h3 class="text-4xl font-bold mb-8 text-white animated-section" style="--animation-delay: 0.7s;">
+                    "Regulación de la Inteligencia Artificial en el Sector Público"
+                </h3>
+                <ul class="text-xl text-gray-300 space-y-4 max-w-2xl mx-auto lg:ml-auto lg:mr-0">
+                    <li class="flex items-start justify-end lg:justify-end animated-section" style="--animation-delay: 0.8s;">
+                        Director del Programa Especializado en Regulación de la IA (UPC).
+                        <span class="text-green-400 ml-3 text-2xl">✓</span>
+                    </li>
+                    <li class="flex items-start justify-end lg:justify-end animated-section" style="--animation-delay: 0.9s;">
+                        Miembro del Observatorio Sector Público e Inteligencia Artificial (OsPIA).
+                        <span class="text-green-400 ml-3 text-2xl">✓</span>
+                    </li>
+                    <li class="flex items-start justify-end lg:justify-end animated-section" style="--animation-delay: 1.0s;">
+                        Análisis de políticas y marcos legales para la IA.
+                        <span class="text-green-400 ml-3 text-2xl">✓</span>
+                    </li>
+                     <li class="flex items-start justify-end lg:justify-end animated-section" style="--animation-delay: 1.1s;">
+                        <a href="mailto:direccion.sistemaslm.utc.edu.ec" class="hover:underline">direccion.sistemaslm.utc.edu.ec</a>
+                        <span class="text-green-400 ml-3 text-2xl">📧</span>
+                    </li>
+                    <li class="flex items-start justify-end lg:justify-end animated-section" style="--animation-delay: 1.2s;">
+                        0996179534
+                        <span class="text-green-400 ml-3 text-2xl">📞</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="w-full lg:w-1/3 flex justify-center lg:justify-start relative speaker-card-glow accent-green rounded-3xl p-1 animated-section" style="--animation-delay: 0.3s;">
+                <img src="images/gianfranco trujillo.jpeg" alt="Gianfranco Mejía Trujillo" class="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full object-cover shadow-2xl border-4 border-green-500 transform transition duration-500 hover:scale-105 hover:-rotate-3">
+            </div>
+        </div>
+    </section>
+
+    <!-- Diapositiva 6: Ponente 5 - Darío Ávila Briceño -->
+    <section id="ponente-dario-avila" class="py-20 px-8 bg-gray-950 min-h-screen flex items-center justify-center relative">
+        <div class="container mx-auto flex flex-col lg:flex-row items-center gap-12 animated-section" style="--animation-delay: 0.2s;">
+            <div class="w-full lg:w-1/3 flex justify-center lg:justify-end relative speaker-card-glow accent-orange rounded-3xl p-1 animated-section" style="--animation-delay: 0.3s;">
+                <img src="images/dario avila.png" alt="Darío Ávila Briceño" class="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full object-cover shadow-2xl border-4 border-orange-500 transform transition duration-500 hover:scale-105 hover:rotate-3">
+            </div>
+            <div class="w-full lg:w-2/3 text-center lg:text-left animated-section" style="--animation-delay: 0.4s;">
+                <h2 class="text-6xl font-extrabold mb-4 speaker-gradient-text accent-orange animated-section" style="--animation-delay: 0.5s;">
+                    Darío Ávila Briceño, Ph.D.
+                </h2>
+                <p class="text-3xl text-gray-400 mb-6 italic animated-section" style="--animation-delay: 0.6s;">Geocientífico y Tech Ejecutivo</p>
+                <h3 class="text-4xl font-bold mb-8 text-white animated-section" style="--animation-delay: 0.7s;">
+                    "Desafíos Éticos de la Inteligencia Artificial"
+                </h3>
+                <ul class="text-xl text-gray-300 space-y-4 max-w-2xl mx-auto lg:mx-0">
+                    <li class="flex items-start animated-section" style="--animation-delay: 0.8s;">
+                        <span class="text-orange-400 mr-3 text-2xl">✓</span>
+                        Latam Cuenta de Ventas Ejecutivo en .Planet.
+                    </li>
+                    <li class="flex items-start animated-section" style="--animation-delay: 0.9s;">
+                        <span class="text-orange-400 mr-3 text-2xl">✓</span>
+                        Experto en Geocientífica, Imágenes satelitales, GIS y Agtech.
+                    </li>
+                    <li class="flex items-start animated-section" style="--animation-delay: 1.0s;">
+                        <span class="text-orange-400 mr-3 text-2xl">✓</span>
+                        Perspectivas sobre la ética de la IA en la tecnología geoespacial.
+                    </li>
+                    <li class="flex items-start animated-section" style="--animation-delay: 1.1s;">
+                        <span class="text-orange-400 mr-3 text-2xl">📧</span>
+                        <a href="mailto:direccion.sistemaslm.utc.edu.ec" class="hover:underline">direccion.sistemaslm.utc.edu.ec</a>
+                    </li>
+                    <li class="flex items-start animated-section" style="--animation-delay: 1.2s;">
+                        <span class="text-orange-400 mr-3 text-2xl">📞</span>
+                        0996179534
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Diapositiva 7: Cierre y Contacto -->
+    <section id="cierre" class="py-20 px-8 bg-gray-800 min-h-screen flex items-center justify-center relative rounded-t-3xl shadow-inner">
+        <div class="container mx-auto text-center animated-section" style="--animation-delay: 0.2s;">
+            <h2 class="text-5xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500 animated-section" style="--animation-delay: 0.3s;">
+                ¡Tu Participación es Clave!
+            </h2>
+            <p class="text-xl text-gray-300 max-w-3xl mx-auto mb-12 animated-section" style="--animation-delay: 0.4s;">
+                Esperamos contar con tu presencia y aportes en futuras capacitaciones. Juntos, continuaremos impulsando la innovación en ingeniería de sistemas de información. ¡Mantente conectado!
+            </p>
+
+            <div class="flex flex-col md:flex-row items-center justify-center gap-8 mb-12 animated-section" style="--animation-delay: 0.5s;">
+                <div class="text-center">
+                    <h3 class="text-2xl font-semibold text-white mb-2">Más Información</h3>
+                    <p class="text-lg text-gray-400">Correo: direccion.sistemaslm.utc.edu.ec</p>
+                    <p class="text-lg text-gray-400">Contacto: 0996179534</p>
+                </div>
+            </div>
+
+            <p class="text-md text-gray-500 animated-section" style="--animation-delay: 0.6s;">
+                © 2025 X Jornadas Informáticas. Todos los derechos reservados.
+            </p>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const animatedElements = document.querySelectorAll('.animated-section');
+
+            const observerOptions = {
+                root: null, // viewport as the root
+                rootMargin: '0px',
+                threshold: 0.1 // 10% of the element must be visible to trigger
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Si el elemento está en la vista, añade la clase para animarlo
+                        entry.target.classList.add('animated-section-visible');
+                    } else {
+                        // Si no está intersectando, remueve la clase para reiniciar su estado
+                        // Esto permite que se re-anime cuando vuelva a estar en la vista
+                        entry.target.classList.remove('animated-section-visible');
+                    }
+                });
+            }, observerOptions);
+
+            // Observa cada elemento con la clase 'animated-section'
+            animatedElements.forEach(element => {
+                observer.observe(element);
+            });
+
+            // Para los elementos dentro de la primera sección (Portada), asegúrate de que se animen al cargar
+            // Estos elementos no necesitan ser observados para aparecer, ya que están visibles inicialmente
+            const firstSectionElements = document.querySelectorAll('#portada .animated-section');
+            firstSectionElements.forEach(element => {
+                element.classList.add('animated-section-visible');
+                // No se necesita desobservar aquí, ya que siempre deben estar animados al inicio.
+            });
+
+            // Funcionalidad del botón "Conoce a Nuestros Ponentes"
+            const scrollToSpeakersBtn = document.getElementById('scrollToSpeakersBtn');
+            if (scrollToSpeakersBtn) {
+                scrollToSpeakersBtn.addEventListener('click', () => {
+                    const firstSpeakerSection = document.getElementById('ponente-valeria-arguello');
+                    if (firstSpeakerSection) {
+                        firstSpeakerSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            }
+        });
+    </script>
+    <script>
+// Fondo animado de números binarios rebotando
+window.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('binario-fondo')) return;
+  const canvas = document.createElement('canvas');
+  canvas.id = 'binario-fondo';
+  canvas.style.position = 'fixed';
+  canvas.style.top = 0;
+  canvas.style.left = 0;
+  canvas.style.width = '100vw';
+  canvas.style.height = '100vh';
+  canvas.style.zIndex = '-2'; // Detrás de todo
+  canvas.style.pointerEvents = 'none';
+  canvas.style.opacity = '0.5';
+  document.body.prepend(canvas);
+
+  const ctx = canvas.getContext('2d');
+  let width = window.innerWidth;
+  let height = window.innerHeight;
+  canvas.width = width;
+  canvas.height = height;
+
+  // Configuración de los números binarios
+  const cantidad = 40;
+  const binarios = [];
+  const fontSize = 32;
+
+  for (let i = 0; i < cantidad; i++) {
+    binarios.push({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: (Math.random() - 0.5) * 2.5,
+      vy: (Math.random() - 0.5) * 2.5,
+      value: Math.random() > 0.5 ? '1' : '0',
+      color: Math.random() > 0.5 ? '#00ff99' : '#a78bfa',
+      size: fontSize + Math.random() * 10
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, width, height);
+    for (let i = 0; i < binarios.length; i++) {
+      let b = binarios[i];
+      ctx.font = `${b.size}px monospace`;
+      ctx.globalAlpha = 0.7;
+      ctx.fillStyle = b.color;
+      ctx.fillText(b.value, b.x, b.y);
+      ctx.globalAlpha = 1;
+      // Movimiento
+      b.x += b.vx;
+      b.y += b.vy;
+      // Rebote en bordes
+      if (b.x < 0 || b.x > width - b.size) b.vx *= -1;
+      if (b.y < b.size || b.y > height) b.vy *= -1;
+      // Rebote entre sí
+      for (let j = i + 1; j < binarios.length; j++) {
+        let b2 = binarios[j];
+        let dx = b.x - b2.x;
+        let dy = b.y - b2.y;
+        let dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < (b.size + b2.size) / 2) {
+          // Intercambia velocidades
+          let tempVx = b.vx;
+          let tempVy = b.vy;
+          b.vx = b2.vx;
+          b.vy = b2.vy;
+          b2.vx = tempVx;
+          b2.vy = tempVy;
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+
+  window.addEventListener('resize', () => {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+  });
+});
+</script>
+    <script src="js/binario-fondo.js"></script>
+</body>
+</html>
